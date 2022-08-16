@@ -27,12 +27,13 @@ class Movie(db.Model):
     genre_id = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'), nullable=False)
     director_id = Column(Integer, ForeignKey(f'{Director.__tablename__}.id'), nullable=False)
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(100), unique=True, nullable=False)
-    password = Column(String(), nullable=False)
+    password = Column(String(250), nullable=False)
     name = Column(String(100))
     surname = Column(String(100))
-    favorite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
+    favourite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
