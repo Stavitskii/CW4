@@ -7,4 +7,4 @@ PyJWT==2.4.0
 
 pytest~=7.1.2
 SQLAlchemy~=1.4.40
-Werkzeug~=2.2.2
+Werkzeug~=2.1.2
