@@ -27,6 +27,5 @@ if __name__ == '__main__':
         load_data(fixtures['directors'], Director)
         load_data(fixtures['movies'], Movie)
 
-
         with suppress(IntegrityError):
             db.session.commit()
