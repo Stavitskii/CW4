@@ -1,6 +1,6 @@
 from project.dao import GenresDAO, MoviesDAO, DirectorsDAO, UsersDAO
 
-from project.services import GenresService,
+from project.services import GenresService, DirectorsService, MoviesService, UsersService
 from project.setup.db import db
 
 # DAO
