@@ -16,3 +16,4 @@ class MoviesService:
 
     def get_all(self, page: Optional[int] = None) -> list[Movie]:
         return self.dao.get_all(page=page)
+
