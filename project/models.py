@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy.orm import relationship
 
 from project.setup.db import models, db
 
@@ -26,6 +27,9 @@ class Movie(db.Model):
     rating = Column(Float, nullable=False)
     genre_id = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'), nullable=False)
     director_id = Column(Integer, ForeignKey(f'{Director.__tablename__}.id'), nullable=False)
+    genre = relationship("Genre")
+    director = relationship("Director")
+
 
 
 class User(db.Model):
@@ -37,3 +41,5 @@ class User(db.Model):
     name = Column(String(100))
     surname = Column(String(100))
     favourite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
+    genre = relationship("Genre")
+
