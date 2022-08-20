@@ -17,9 +17,9 @@ class UsersRegisterView(Resource):
         """
         data = request.json
         if data.get('email') and data.get('password'):
-            return user_service.create_user()
+            return user_service.create_user(data.get('email'), data.get('password')), 201
         else:
-            return "Email or password needed"
+            return "Email or password needed", 401
 
 
 @api.route('/login')

@@ -35,3 +35,7 @@ class MoviesDAO(BaseDAO[Movie]):
 class UsersDAO(BaseDAO[User]):
     __model__ = User
 
+    def create(self, login, password):
+        self._db_session.add()
+
+
