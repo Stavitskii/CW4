@@ -8,7 +8,7 @@ api = Namespace('auth')
 
 
 @api.route('/register')
-class UsersRegisterView(Resource):
+class RegisterhView(Resource):
 
     @api.marshal_with(user, as_list=True, code=200, description='OK')
     def post(self):
@@ -23,12 +23,13 @@ class UsersRegisterView(Resource):
 
 
 @api.route('/login')
-class GenreView(Resource):
+class LoginView(Resource):
     @api.response(404, 'Not Found')
-    @api.marshal_with(genre, code=200, description='OK')
-    def get(self, genre_id: int):
-        """
-        Get genre by id.
-        """
-        return genre_service.get_item(genre_id)
+    @api.marshal_with(user, code=200, description='OK')
+    def post(self):
+        data = request.json
+        if data.get('email') and data.get('password'):
+            return user_service.check(data.get('email'), data.get('password')), 201
+        else:
+            return "Email or password needed", 401
 

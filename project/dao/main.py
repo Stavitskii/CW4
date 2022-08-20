@@ -5,6 +5,7 @@ from werkzeug.exceptions import NotFound
 
 from project.dao.base import BaseDAO, T
 from project.models import *
+from project.tools.security import generate_password_hash
 
 
 class GenresDAO(BaseDAO[Genre]):
@@ -18,7 +19,7 @@ class DirectorsDAO(BaseDAO[Director]):
 class MoviesDAO(BaseDAO[Movie]):
     __model__ = Movie
 
-    def get_all_order_by (self, page: Optional[int] = None, filter = None) -> List[T]:
+    def get_all_order_by(self, page: Optional[int] = None, filter=None) -> List[T]:
         stmt = self._db_session.query(self.__model__)
         if filter:
             stmt = stmt.order_by(desc(self.__model__.year))
@@ -31,7 +32,6 @@ class MoviesDAO(BaseDAO[Movie]):
         return stmt.all()
 
 
-
 class UsersDAO(BaseDAO[User]):
     __model__ = User
 
@@ -40,7 +40,7 @@ class UsersDAO(BaseDAO[User]):
             self._db_session.add(
                 User(
                     email=login,
-                    password=hash(password)
+                    password=generate_password_hash(password)
                 )
             )
             self._db_session.commit()
@@ -49,15 +49,11 @@ class UsersDAO(BaseDAO[User]):
             print(e)
             self._db_session.rollback()
 
-    def get_token(self, login, password_hash):
+    def get_user_by_login(self, login):
         try:
-            stmt = self._db_session.query(self.__model__).filter(self._db_session.query(self.__model__.email==login)).one()
+            stmt = self._db_session.query(self.__model__).filter(
+                self._db_session.query(self.__model__.email == login)).one()
             return stmt
         except Exception as e:
             print(e)
             return {}
-
-
-
-
-
