@@ -8,7 +8,7 @@ api = Namespace('auth')
 
 
 @api.route('/register')
-class RegisterhView(Resource):
+class RegisterView(Resource):
 
     @api.marshal_with(user, as_list=True, code=200, description='OK')
     def post(self):
