@@ -1,8 +1,13 @@
 import base64
 import hashlib
-import hmac
+import calendar
+import datetime
+
+import jwt
 
 from flask import current_app, abort
+
+from project.services import UsersService
 
 
 def __generate_password_digest(password: str) -> bytes:
@@ -19,40 +24,36 @@ def generate_password_hash(password: str) -> str:
 
 
 def compare_password_hash(password_hash, other_password) -> bool:
-    decoded_digest = base64.b16decode(password_hash)
-    hash_digest = hashlib.pbkdf2_hmac(
-        'sha256',
-        other_password.encode('utf-8'),
-        salt=current_app.config["PWD_HASH_SALT"],
-        iterations=current_app.config["PWD_HASH_ITERATIONS"]
-    )
-    return hmac.compare_digest(decoded_digest,hash_digest)
+    return password_hash == generate_password_hash(other_password)
 
-
-
-import calendar
-import datetime
-
-import jwt
+    # decoded_digest = base64.b16decode(password_hash)
+    # hash_digest = hashlib.pbkdf2_hmac(
+    #     'sha256',
+    #     other_password.encode('utf-8'),
+    #     salt=current_app.config["PWD_HASH_SALT"],
+    #     iterations=current_app.config["PWD_HASH_ITERATIONS"]
+    # )
+    # return hmac.compare_digest(decoded_digest, hash_digest)
 
 
 class AuthService:
-    def __init__(self, user_service: UserService):
+    def __init__(self, user_service: UsersService):
         self.user_service = user_service
 
+    @staticmethod
     def generate_tokens(self, email, password, is_refresh=False):
-        user = self.user_service.get_by_email(email)
+        user = self.user_service.get_user_by_login(email)
 
-        if not user:
+        if user is None:
             raise abort(404)
 
         if not is_refresh:
-            if not generate_password_hash(user.password, password):
+            if not compare_password_hash(user.password, password):
                 abort(404)
 
         data = {
-            "email": user.email,
-            "role": user.password
+            "email": email,
+            "password": password
         }
 
         # access token on 15 min
@@ -61,12 +62,14 @@ class AuthService:
         access_token = jwt.encode(data, key=current_app.config['SECRET_KEY'],
                                   algorithm=current_app.config['ALGORITHM'])
 
-        # refresh token on 30 day
-        day30 = datetime.datetime.utcnow() + datetime.timedelta(days=30)
-        data["exp"] = calendar.timegm(day30.timetuple())
-        refresh_token = jwt.encode(data, JWT_SECRET, algorithm=JWT_ALG)
+        # refresh token on 130 day
+        day130 = datetime.datetime.utcnow() + datetime.timedelta(days=current_app.config['TOKEN_EXPIRE_DAYS'])
+        data["exp"] = calendar.timegm(day130.timetuple())
+        refresh_token = jwt.encode(data, key=current_app.config['SECRET_KEY'],
+                                   algorithm=current_app.config['ALGORITHM'])
 
-        return {"access_token": access_token, "refresh_token": refresh_token}
+        return {"access_token": access_token,
+                "refresh_token": refresh_token}
 
     def approve_refresh_token(self, refresh_token):
         data = jwt.decode(refresh_token, JWT_SECRET, algorithms=[JWT_ALG])

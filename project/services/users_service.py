@@ -3,7 +3,7 @@ from typing import Optional
 from project.dao import UsersDAO
 from project.exceptions import ItemNotFound
 from project.models import User
-from project.tools.security import generate_password_hash
+from project.tools.security import AuthService
 
 
 class UsersService:
@@ -21,13 +21,10 @@ class UsersService:
     def create_user(self, login, password):
         self.dao.create(login, password)
 
+    def get_user_by_login(self, login):
+        return self.dao.get_user_by_login(login)
+
     def check(self, login, password):
-        result =self.dao.get_user_by_login(login)
-        if len(result):
-            if result.get('password') == generate_password_hash(password):
-
-
-
-
+        AuthService.generate_tokens(login, password)
 
 
