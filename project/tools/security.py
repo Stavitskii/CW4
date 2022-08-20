@@ -7,7 +7,6 @@ import jwt
 
 from flask import current_app, abort
 
-from project.services import UsersService
 
 
 def __generate_password_digest(password: str) -> bytes:
@@ -37,7 +36,7 @@ def compare_password_hash(password_hash, other_password) -> bool:
 
 
 class AuthService:
-    def __init__(self, user_service: UsersService):
+    def __init__(self, user_service):
         self.user_service = user_service
 
     @staticmethod
