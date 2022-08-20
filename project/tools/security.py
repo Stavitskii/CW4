@@ -41,8 +41,8 @@ class AuthService:
         self.user_service = user_service
 
     @staticmethod
-    def generate_tokens(self, email, password, is_refresh=False):
-        user = self.user_service.get_user_by_login(email)
+    def generate_tokens(user, password, is_refresh=False):
+
 
         if user is None:
             raise abort(404)
@@ -52,8 +52,8 @@ class AuthService:
                 abort(404)
 
         data = {
-            "email": email,
-            "password": password
+            "email": user.email,
+            "password": user.password
         }
 
         # access token on 15 min

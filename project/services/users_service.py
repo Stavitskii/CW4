@@ -25,6 +25,6 @@ class UsersService:
         return self.dao.get_user_by_login(login)
 
     def check(self, login, password):
-        AuthService.generate_tokens(login, password)
+        return AuthService.generate_tokens(user=self.get_user_by_login(login), password=password)
 
 
