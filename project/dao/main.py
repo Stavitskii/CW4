@@ -36,6 +36,28 @@ class UsersDAO(BaseDAO[User]):
     __model__ = User
 
     def create(self, login, password):
-        self._db_session.add()
+        try:
+            self._db_session.add(
+                User(
+                    email=login,
+                    password=hash(password)
+                )
+            )
+            self._db_session.commit()
+            print("User is added")
+        except Exception as e:
+            print(e)
+            self._db_session.rollback()
+
+    def get_token(self, login, password_hash):
+        try:
+            stmt = self._db_session.query(self.__model__).filter(self._db_session.query(self.__model__.email==login)).one()
+            return stmt
+        except Exception as e:
+            print(e)
+            return {}
+
+
+
 
 
