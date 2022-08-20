@@ -31,15 +31,14 @@ class Movie(db.Model):
     director = relationship("Director")
 
 
-
-class User(db.Model):
+#class User(db.Model):
+class User(models.Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+#    id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(250), nullable=False)
     name = Column(String(100))
     surname = Column(String(100))
     favourite_genre = Column(Integer, ForeignKey(f'{Genre.__tablename__}.id'))
     genre = relationship("Genre")
-

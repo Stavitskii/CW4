@@ -40,7 +40,9 @@ class UsersDAO(BaseDAO[User]):
             self._db_session.add(
                 User(
                     email=login,
-                    password=generate_password_hash(password)
+                    password=generate_password_hash(password),
+                    name="qwe"
+
                 )
             )
             self._db_session.commit()
