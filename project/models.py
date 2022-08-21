@@ -31,11 +31,11 @@ class Movie(db.Model):
     director = relationship("Director")
 
 
-#class User(db.Model):
-class User(models.Base):
+class User(db.Model):
+
     __tablename__ = 'users'
 
-#    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(250), nullable=False)
     name = Column(String(100))
