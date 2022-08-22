@@ -19,10 +19,11 @@ def __generate_password_digest(password: str) -> bytes:
 
 
 def generate_password_hash(password: str) -> str:
-    return base64.b64encode(__generate_password_digest(password)).decode('utf-8')
+        return base64.b64encode(__generate_password_digest(password)).decode('utf-8')
 
 
 def compare_password_hash(password_hash, other_password) -> bool:
+
     return password_hash == generate_password_hash(other_password)
 
     # decoded_digest = base64.b16decode(password_hash)
@@ -41,7 +42,6 @@ class AuthService:
 
     @staticmethod
     def generate_tokens(user, password, is_refresh=False):
-
 
         if user is None:
             raise abort(404)
@@ -79,3 +79,6 @@ class AuthService:
             return False
 
         return self.generate_tokens(email, user.password, is_refresh=True)
+
+
+
