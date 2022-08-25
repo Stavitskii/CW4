@@ -7,7 +7,7 @@ from project.setup.api.models import user
 api = Namespace('auth')
 
 
-@api.route('/register')
+@api.route('/register/')
 class RegisterView(Resource):
 
     @api.marshal_with(user, as_list=True, code=200, description='OK')
@@ -22,7 +22,7 @@ class RegisterView(Resource):
             return "Email or password needed", 401
 
 
-@api.route('/login')
+@api.route('/login/')
 class LoginView(Resource):
     @api.response(404, 'Not Found')
     #@api.marshal_with(user, code=200, description='OK')

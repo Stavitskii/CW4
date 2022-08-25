@@ -8,7 +8,6 @@ import jwt
 from flask import current_app, abort
 
 
-
 def __generate_password_digest(password: str) -> bytes:
     return hashlib.pbkdf2_hmac(
         hash_name="sha256",
@@ -19,11 +18,10 @@ def __generate_password_digest(password: str) -> bytes:
 
 
 def generate_password_hash(password: str) -> str:
-        return base64.b64encode(__generate_password_digest(password)).decode('utf-8')
+    return base64.b64encode(__generate_password_digest(password)).decode('utf-8')
 
 
 def compare_password_hash(password_hash, other_password) -> bool:
-
     return password_hash == generate_password_hash(other_password)
 
     # decoded_digest = base64.b16decode(password_hash)
@@ -46,9 +44,8 @@ class AuthService:
         if user is None:
             raise abort(404)
 
-        if not is_refresh:
-            if not compare_password_hash(user.password, password):
-                abort(404)
+        if not is_refresh and not compare_password_hash(user.password, password):
+            abort(404)
 
         data = {
             "email": user.email,
@@ -71,7 +68,7 @@ class AuthService:
                 "refresh_token": refresh_token}
 
     def approve_refresh_token(self, refresh_token):
-        data = jwt.decode(refresh_token, JWT_SECRET, algorithms=[JWT_ALG])
+        data = jwt.decode(refresh_token, key=current_app.config['SECRET_KEY'], algorithms=current_app.config['ALGORITHM'])
         email = data['email']
         user = self.user_service.get_by_email(email)
 
@@ -79,6 +76,3 @@ class AuthService:
             return False
 
         return self.generate_tokens(email, user.password, is_refresh=True)
-
-
-
