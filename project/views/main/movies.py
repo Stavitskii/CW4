@@ -17,9 +17,9 @@ class MoviesView(Resource):
         Get all movies.
         """
 
-        filter = request.args.get('status')
-        if filter != None and filter == 'new':
-            return movie_service.get_all(filter=filter, **page_parser.parse_args())
+        status = request.args.get('status')
+        if status is not None and status == 'new':
+            return movie_service.get_all(filter=status, **page_parser.parse_args())
 
         else:
             return movie_service.get_all(**page_parser.parse_args())
