@@ -32,8 +32,4 @@ def create_app(config_obj):
 
     app.register_error_handler(BaseServiceError, base_service_error_handler)
 
-
-
     return app
-
-
