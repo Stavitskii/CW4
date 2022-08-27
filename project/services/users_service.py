@@ -40,4 +40,5 @@ class UsersService:
     def update_user(self, data: dict, refresh_token):
         user = self.get_user_by_token(refresh_token)
         if user:
-            self.dao.update(login=user.get('email'), data=data)
+            self.dao.update(login=user.email, data=data)
+            return self.get_user_by_token(refresh_token)
