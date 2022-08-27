@@ -36,10 +36,10 @@ def compare_password_hash(password_hash, other_password) -> bool:
 
 def generate_tokens(email, password, password_hash=None, is_refresh=False):
     if email is None:
-        raise abort(404)
+        return None
 
-    if not is_refresh and not compare_password_hash(password, password_hash):
-        abort(404)
+    if not is_refresh and not compare_password_hash(other_password=password, password_hash=password_hash):
+        return None
 
     data = {
         "email": email,
