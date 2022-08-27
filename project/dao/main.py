@@ -57,3 +57,15 @@ class UsersDAO(BaseDAO[User]):
         except Exception as e:
             print(e)
             return {}
+
+    def update(self, login, data):
+        try:
+            self._db_session.query(self.__model__).filter(self.__model__.email == login).update(
+                data
+            )
+            self._db_session.commit()
+            print("User is updated")
+
+        except Exception as e:
+            print(e)
+            self._db_session.rollback()

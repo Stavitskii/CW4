@@ -37,9 +37,7 @@ class UsersService:
         if data:
             return self.get_user_by_login(data.get('email'))
 
-
-
-
-
-
-
+    def update_user(self, data: dict, refresh_token):
+        user = self.get_user_by_token(refresh_token)
+        if user:
+            self.dao.update(login=user.get('email'), data=data)

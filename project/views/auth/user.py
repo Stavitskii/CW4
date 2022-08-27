@@ -15,9 +15,7 @@ class RegisterView(Resource):
     def get(self):
         data = request.json
         header = request.headers
-        user_service.get_user_by_token()
-
-
+        user_service.update_user(data=data, refresh_token=header)
 
         return "Something needed", 401
 
@@ -29,11 +27,10 @@ class RegisterView(Resource):
             return "Something needed", 401
 
 
-
 @api.route('/password/')
 class LoginView(Resource):
     @api.response(404, 'Not Found')
-    #@api.marshal_with(user, code=200, description='OK')
+    # @api.marshal_with(user, code=200, description='OK')
     def post(self):
         data = request.json
         if data.get('email') and data.get('password'):
