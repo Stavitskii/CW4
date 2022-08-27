@@ -34,7 +34,7 @@ def compare_password_hash(password_hash, other_password) -> bool:
     # return hmac.compare_digest(decoded_digest, hash_digest)
 
 
-def generate_tokens(email, password, password_hash, is_refresh=False):
+def generate_tokens(email, password, password_hash=None, is_refresh=False):
     if email is None:
         raise abort(404)
 

@@ -29,7 +29,7 @@ class UsersService:
         return generate_tokens(email=user.email, password=password, password_hash=user.password)
 
     def update_token(self, refresh_token):
-        approve_refresh_token(refresh_token)
+        return approve_refresh_token(refresh_token)
 
 
 
