@@ -44,7 +44,7 @@ def generate_tokens(email, password, password_hash=None, is_refresh=False):
     data = {
         "email": email,
         "password": password
-        }
+    }
 
     # access token on 15 min
     min15 = datetime.datetime.utcnow() + datetime.timedelta(minutes=current_app.config['TOKEN_EXPIRE_MINUTES'])
@@ -69,3 +69,12 @@ def approve_refresh_token(refresh_token):
     password = data.get('password')
 
     return generate_tokens(email, password, is_refresh=True)
+
+
+def get_data_from_token(refresh_token):
+    try:
+        data = jwt.decode(jwt=refresh_token, key=current_app.config['SECRET_KEY'],
+                          algorithms=[current_app.config['ALGORITHM']])
+        return data
+    except Exception:
+        return None

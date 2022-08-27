@@ -1,5 +1,10 @@
+from importlib.resources import Resource
+
 from flask import request
 from flask_restx import Namespace
+
+from project.container import user_service
+from project.setup.api.models import user
 
 api = Namespace('user')
 
@@ -9,10 +14,12 @@ class RegisterView(Resource):
     @api.marshal_with(user, as_list=True, code=200, description='OK')
     def get(self):
         data = request.json
-        if data.get('email') and data.get('password'):
-            return user_service.create_user(data.get('email'), data.get('password')), 201
-        else:
-            return "Something needed", 401
+        header = request.headers
+        user_service.get_user_by_token()
+
+
+
+        return "Something needed", 401
 
     def patch(self):
         data = request.json
