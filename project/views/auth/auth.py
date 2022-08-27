@@ -33,3 +33,11 @@ class LoginView(Resource):
         else:
             return "Email or password needed", 401
 
+    @api.response(404, 'Not Found')
+    def put(self):
+        data = request.json
+        if data.get('access_token') and data.get('refresh_token'):
+            return user_service.update_token(data.get('refresh_token')), 201
+        else:
+            return "Something needed", 401
+

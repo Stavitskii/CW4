@@ -34,45 +34,38 @@ def compare_password_hash(password_hash, other_password) -> bool:
     # return hmac.compare_digest(decoded_digest, hash_digest)
 
 
-class AuthService:
-    def __init__(self, user_service):
-        self.user_service = user_service
+def generate_tokens(email, password, password_hash, is_refresh=False):
+    if email is None:
+        raise abort(404)
 
-    @staticmethod
-    def generate_tokens(user, password, is_refresh=False):
+    if not is_refresh and not compare_password_hash(password, password_hash):
+        abort(404)
 
-        if user is None:
-            raise abort(404)
+    data = {
+        "email": email,
+        "password": password
+    }
 
-        if not is_refresh and not compare_password_hash(user.password, password):
-            abort(404)
+    # access token on 15 min
+    min15 = datetime.datetime.utcnow() + datetime.timedelta(minutes=current_app.config['TOKEN_EXPIRE_MINUTES'])
+    data["exp"] = calendar.timegm(min15.timetuple())
+    access_token = jwt.encode(data, key=current_app.config['SECRET_KEY'],
+                              algorithm=current_app.config['ALGORITHM'])
 
-        data = {
-            "email": user.email,
-            "password": user.password
-        }
+    # refresh token on 130 day
+    day130 = datetime.datetime.utcnow() + datetime.timedelta(days=current_app.config['TOKEN_EXPIRE_DAYS'])
+    data["exp"] = calendar.timegm(day130.timetuple())
+    refresh_token = jwt.encode(data, key=current_app.config['SECRET_KEY'],
+                               algorithm=current_app.config['ALGORITHM'])
 
-        # access token on 15 min
-        min15 = datetime.datetime.utcnow() + datetime.timedelta(minutes=current_app.config['TOKEN_EXPIRE_MINUTES'])
-        data["exp"] = calendar.timegm(min15.timetuple())
-        access_token = jwt.encode(data, key=current_app.config['SECRET_KEY'],
-                                  algorithm=current_app.config['ALGORITHM'])
+    return {"access_token": access_token,
+            "refresh_token": refresh_token}
 
-        # refresh token on 130 day
-        day130 = datetime.datetime.utcnow() + datetime.timedelta(days=current_app.config['TOKEN_EXPIRE_DAYS'])
-        data["exp"] = calendar.timegm(day130.timetuple())
-        refresh_token = jwt.encode(data, key=current_app.config['SECRET_KEY'],
-                                   algorithm=current_app.config['ALGORITHM'])
 
-        return {"access_token": access_token,
-                "refresh_token": refresh_token}
+def approve_refresh_token(refresh_token):
+    data = jwt.decode(jwt=refresh_token, key=current_app.config['SECRET_KEY'],
+                      algorithms=[current_app.config['ALGORITHM']])
+    email = data.get('email')
+    password = data.get('password')
 
-    def approve_refresh_token(self, refresh_token):
-        data = jwt.decode(refresh_token, key=current_app.config['SECRET_KEY'], algorithms=current_app.config['ALGORITHM'])
-        email = data['email']
-        user = self.user_service.get_by_email(email)
-
-        if not user:
-            return False
-
-        return self.generate_tokens(email, user.password, is_refresh=True)
+    return generate_tokens(email, password, is_refresh=True)
