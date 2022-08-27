@@ -3,7 +3,7 @@ from typing import Optional
 from project.dao import UsersDAO
 from project.exceptions import ItemNotFound
 from project.models import User
-from project.tools.security import generate_tokens, approve_refresh_token, get_data_from_token
+from project.tools.security import generate_tokens, approve_refresh_token, get_data_from_token, generate_password_hash
 
 
 class UsersService:
@@ -42,3 +42,11 @@ class UsersService:
         if user:
             self.dao.update(login=user.email, data=data)
             return self.get_user_by_token(refresh_token)
+
+    def update_password(self, data, refresh_token):
+        user = self.get_user_by_token(refresh_token)
+        if user:
+            self.dao.update(login=user.email, data={"password":generate_password_hash(data.get('password_2'))})
+            return self.check(login=user.email, password=data.get('password_2'))
+
+
