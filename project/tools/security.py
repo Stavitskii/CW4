@@ -44,7 +44,7 @@ def generate_tokens(email, password, password_hash=None, is_refresh=False):
     data = {
         "email": email,
         "password": password
-    }
+        }
 
     # access token on 15 min
     min15 = datetime.datetime.utcnow() + datetime.timedelta(minutes=current_app.config['TOKEN_EXPIRE_MINUTES'])
